@@ -123,6 +123,14 @@
 @keyframes storyBorder{from{opacity:.4}to{opacity:1}}
 @keyframes storyFade{from{opacity:1}to{opacity:0}}
 @keyframes milestoneArrive{0%{opacity:0;transform:scale(1.23);filter:brightness(3)}55%{opacity:1;transform:scale(.97);filter:brightness(1.2)}100%{opacity:1;transform:scale(1);filter:brightness(1)}}
+/* V25: Club floor is a single continuous RUSH scene. No dramatic stage-cut overlays. */
+#rushScreen .rush-shift,
+#rushScreen .rush-shift.on,
+#rushScreen .rush-red {display:none!important;opacity:0!important;}
+#rushScreen .rush-bg,
+#rushScreen.red-stage .rush-bg,
+#rushScreen.stage-changing .rush-bg{animation:none!important;transform:none!important;filter:none!important;transition:none!important;}
+#rushScreen .rush-glimmer{background:radial-gradient(circle at 50% 80%,transparent 30%,#4b1d7540 95%)!important;animation:rushLights 5s ease-in-out infinite alternate!important;}
 </style></head><body><main>
 <div class="cabinet" id="cabinet">
  <div class="lcd" id="lcd"><img class="scene" id="scene"><img class="hero" id="hero">
@@ -162,7 +170,7 @@
  <button class="hot lever" id="lever" aria-label="レバー"></button>
  <button class="hot stop s0" id="stop0" aria-label="左STOP"></button><button class="hot stop s1" id="stop1" aria-label="中STOP"></button><button class="hot stop s2" id="stop2" aria-label="右STOP"></button>
 </div>
-<div class="controls"><span>V24 昇一ダンス復活・継続率昇格・純増12枚／G</span><button id="sound">🔊 音 ON</button><button id="audioCheck" type="button">♪ 音を確認</button><button id="audioResume" type="button" hidden>♪ BGMを再生</button><button id="auto">▶ AUTO OFF</button><button id="test">⚙ テスト</button></div>
+<div class="controls"><span>V25 昇一ダンス＋クラブ背景固定・継続率昇格・純増12枚／G</span><button id="sound">🔊 音 ON</button><button id="audioCheck" type="button">♪ 音を確認</button><button id="audioResume" type="button" hidden>♪ BGMを再生</button><button id="auto">▶ AUTO OFF</button><button id="test">⚙ テスト</button></div>
 <div class="status" id="status" role="status">MAX BET → レバー → STOP ×3</div>
 <div class="debug-controls" id="debugControls"><button id="czDemo">CZを試す</button><button id="ojDemo">青7 BONUS試遊</button><button id="obDemo">赤7 BONUS試遊</button><button id="rushDemo">昇一RUSH試遊</button><button id="sevenDemo">7揃い抽選を試す</button><button id="fbet">BET</button><button id="flever">レバー</button><button id="f0">左STOP</button><button id="f1">中STOP</button><button id="f2">右STOP</button></div>
 <div class="hint">遊技：MAX BET → レバー → STOP。CZ最終判定・BONUS入賞はレバーON。</div>
@@ -500,8 +508,7 @@ function start(){
    if(rushGame<=26){
       const storyVisible=handleShokokaiGame();
       if(!storyVisible){
-        if(rushGame>=rushNextStageGame){setRushStage(forceRushStageFloor(chooseNextRushStage()),true);scheduleNextRushStage();msg('昇一RUSH：ステージチェンジ！')}
-        else maybeRushCutin();
+        maybeRushCutin(); // Club background stays fixed; only intentional event cut-ins appear.
       }
     }
    if(rushGame===27){$('rushScreen').classList.add('final-chance');hideShokokaiSlide();hideRushNotice();showRushSplash('chance','真おじさんおばさんCHANCE！',1250);msg('27G：真おじさんおばさんCHANCE突入！')}
@@ -585,10 +592,10 @@ function finish(){
      locked=true;
      if(rushContinue){
        rushSet++;hideRushChoice();showRushSplash('continue','継続！ +30G！',2200);
-       setRushStage('rainbow',false);
+       setRushStage('normal',false);
        msg(`昇一RUSH継続！ SET ${rushSet} +30G！`);playGoldFx('rush-continue');showRushNotice('maybe','RUSH継続確定！！',950);
        setTimeout(()=>{if(phase==='RUSH'){rushGame=0;rushContinue=null;rushChoice=null;rushStory=null;rushStoryStarted=false;rushStoryStep=0;hideShokokaiSlide();
-         $('rushScreen').classList.remove('final-chance');hideRushSplash();setRushStage(forceRushStageFloor(pickRushEffect()),true);scheduleNextRushStage();
+         $('rushScreen').classList.remove('final-chance');hideRushSplash();setRushStage('normal',false);
          locked=false;updateRushHUD();update();msg(`昇一RUSH SET ${rushSet}：30Gスタート！`) }},2350);
      }else{
        hideRushChoice();showRushSplash('end','昇一RUSH終了',2200);
@@ -641,8 +648,8 @@ function maybeRushCutin(){
  showRushNotice('aware','昇一が何かに気づいた…！',760);
  setTimeout(()=>{
    if(phase!=='RUSH'||rushGame>=27||serial!==rushStageSerial)return;
-   if(hot){setRushStage('red',true);scheduleNextRushStage();msg('昇一RUSH：紅蓮ステージへ激変！ 継続期待度アップ！')}
-   else msg('気のせいか… ディスコの照明が戻った');
+   if(hot)msg('昇一が何かを感じた…！ まだ何も起きない');
+   else msg('気のせいか… 昇一は踊り続ける');
  },820);
 }
 
@@ -700,7 +707,7 @@ function chooseNextRushStage(){
  return next;
 }
 function scheduleNextRushStage(){
- // High-rate ATs get faster, stronger transitions, but all rates change scene regularly.
+ // Legacy stage scheduler retained only for backwards compatibility; no stage cuts.
  rushNextStageGame=rushGame+(rushRate>=.85?3+Math.floor(Math.random()*2):4+Math.floor(Math.random()*3));
 }
 // Each outcome is chosen independently at entry. A single drawn story consumes the set's attempt.
@@ -739,10 +746,7 @@ function handleShokokaiGame(){
    rushStoryStep=step;
    if(step===3){
     rushRate=nextRushPromotionRate(rushRate);rushStoryWins++;
-    rushStageFloor=Math.min(3,rushStageFloor+1);
-    const preferred=SHOKOKAI_STAGE_ORDER[Math.max(rushStageFloor,SHOKOKAI_STAGE_ORDER.indexOf(rushEffect))];
-    setRushStage(preferred,false);scheduleNextRushStage();
-    showShokokaiSlide(rushStory.variant,3,true);playGoldFx('shokokai-up');pulseFlash(180);
+     showShokokaiSlide(rushStory.variant,3,true);playGoldFx('shokokai-up');pulseFlash(180);
     msg('商工会ステージアップ確定！ 内部継続率が1段階アップ！');
    }else{
     showShokokaiSlide(rushStory.variant,2);
@@ -760,7 +764,7 @@ function handleShokokaiGame(){
   const variant=SHOKOKAI_VARIANTS[Math.floor(Math.random()*3)];
   rushStory={start:rushGame,variant,outcome};rushStoryStep=1;
   hideRushNotice();hideRushSplash();resetRushStageEffects();
-  showShokokaiSlide(variant,1);stageShiftSound('gold');
+  showShokokaiSlide(variant,1);tone(820,.13);
   msg('商工会って……！ 次ゲームでセリフが続けばチャンス！');
   return true;
  }
@@ -809,30 +813,15 @@ function stageShiftSound(stage){
  }catch(e){}
 }
 function setRushStage(stage,animated=true){
- const screen=$('rushScreen'),fx=$('rushShift');
- const prior=rushEffect;
- rushEffect=stage;
+ // V25: Legacy callers cannot switch away from the approved disco stage.
  rushStageSerial++;
- const serial=rushStageSerial;
  clearTimeout(rushStageSwapTimer);clearTimeout(rushStageEndTimer);
- fx.classList.remove('on');screen.classList.remove('stage-changing');
- const changeImage=()=>{
-   if(serial!==rushStageSerial||phase!=='RUSH')return;
-   $('rushBg').src=RUSH_IMAGES[stage==='red'?'gold':stage]||RUSH_IMAGES.normal;
-   screen.dataset.energy=stage;
-   setRushRedStage(stage==='red');
- };
- if(!animated){changeImage();return;}
- const names={low:'ナイトステージ',normal:'ディスコステージ',blue:'青レーザーステージ',red:'紅蓮ステージ',gold:'黄金ステージ',rainbow:'レインボーステージ'};
- $('rushShiftTitle').textContent=names[stage]||'STAGE CHANGE';
- $('rushShiftSub').textContent='昇一RUSH  STAGE CHANGE';
- // Force an animation restart for every real scene change.
- void fx.offsetWidth;fx.classList.add('on');screen.classList.add('stage-changing');
- stageShiftSound(stage);
- rushStageSwapTimer=setTimeout(changeImage,125);
- rushStageEndTimer=setTimeout(()=>{if(serial!==rushStageSerial)return;fx.classList.remove('on');screen.classList.remove('stage-changing')},870);
- rushStageChanges++;
- rushStageHistory.push({set:rushSet,game:rushGame,from:prior,to:stage});
+ rushEffect='normal';
+ const screen=$('rushScreen');
+ $('rushShift').classList.remove('on');
+ screen.classList.remove('stage-changing','red-stage');
+ screen.dataset.energy='normal';
+ if($('rushBg').src!==RUSH_IMAGES.normal)$('rushBg').src=RUSH_IMAGES.normal;
 }
 function resetRushStageEffects(){
  rushStageSerial++;clearTimeout(rushStageSwapTimer);clearTimeout(rushStageEndTimer);
@@ -875,10 +864,10 @@ function enterRush(){
  imageOn('bonusScreen',false);artOff();imageOn('czStage',false);
  phase='RUSH';locked=true;betReady=false;replayCredit=false;
  rushRate=pickRushRate();rushSet=1;rushGame=0;rushEarned=0;rushContinue=null;rushChoice=null;
- rushEffect=pickRushEffect();rushLastNoticeGame=-10;rushRedGames=0;
+ rushEffect='normal';rushLastNoticeGame=-10;rushRedGames=0;
  rushStageChanges=0;rushStageHistory=[];rushNextStageGame=4;rushStageFloor=0;rushStoryStarted=false;rushStory=null;rushStoryStep=0;rushStoryAppearances=0;rushStoryWins=0;rushStoryFakes1=0;rushStoryFakes2=0;rushMilestonesSeen=new Set();clearRushMilestone();hideShokokaiSlide();
  imageOn('rushScreen',true);$('rushScreen').classList.remove('final-chance');hideRushNotice();hideRushChoice();resetRushStageEffects();
- setRushStage(rushEffect,false);scheduleNextRushStage();updateRushHUD();
+ setRushStage('normal',false);updateRushHUD();
  startRushDance(); // Foreground dancer keeps moving while stage backgrounds transform.
  startRushMusic(); // Five existing tracks shuffled continuously, each played to completion.
  showRushSplash('intro','昇一RUSH START！ 30G',1850);showRushNotice('entry','昇一RUSH突入！！',1200);
