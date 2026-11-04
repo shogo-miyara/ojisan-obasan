@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><meta name="theme-color" content="#090512"><title>おじさん★おばさん SLOT V23 完成版・昇一RUSH</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><meta name="theme-color" content="#090512"><title>おじさん★おばさん SLOT V24 昇一ダンス復活版</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#08060d;color:#f2e9ff;font-family:system-ui,-apple-system,'Noto Sans JP',sans-serif}body{display:flex;justify-content:center}main{width:min(100vw,600px);padding-bottom:12px}.cabinet{position:relative;aspect-ratio:1024/1536;width:100%;background-position:center;background-size:100% 100%;overflow:hidden;user-select:none;-webkit-user-select:none}
 .lcd{position:absolute;left:22%;top:12.1%;width:55.1%;height:18.4%;overflow:hidden;border:2px solid #8d5c27;background:#090615;box-shadow:inset 0 0 14px #000,0 0 5px #f2bb7f}.lcd>img.scene{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85) saturate(1.1)}.lcd>img.hero{position:absolute;bottom:-46%;left:50%;height:150%;max-width:none;transform:translateX(-50%);filter:drop-shadow(0 3px 4px #000a)}.lcd:after{position:absolute;inset:0;pointer-events:none;content:'';z-index:40;border:2px solid #ffffff23;box-shadow:inset 0 0 10px #000b}
@@ -75,8 +75,12 @@
 #rushNoticeCaption{position:absolute;bottom:2%;left:2%;right:2%;text-align:center;color:white;font-weight:950;font-size:clamp(9px,2.5vw,15px);text-shadow:0 1px 4px black,0 0 5px black;background:#040414aa;padding:2px;border-radius:5px}
 
 
-/* V22: stage-scenes ONLY. Hide old dancer sprites completely; preserve other assets. */
-#rushScreen .rush-dancer,#rushScreen .rush-dancer.show{display:none!important}
+/* V24: 昇一 returns to the stage. The dancer is a continuous foreground layer;
+   the stage changes BEHIND him, while story / final-four-game screens cover it. */
+#rushScreen .rush-dancer{display:block;z-index:4;left:51%;bottom:-2%;height:91%;width:auto;max-width:none;opacity:0;transition:opacity .26s ease-in-out;pointer-events:none;filter:drop-shadow(0 3px 5px #050017dd) drop-shadow(0 0 10px #ffb84d4c)}
+#rushScreen .rush-dancer.show{display:block;opacity:1}
+#rushScreen.final-chance .rush-dancer,#rushScreen.final-chance .rush-dancer.show{opacity:0!important;visibility:hidden}
+
 #rushScreen .rush-bg{animation:rushStageDrift 6s ease-in-out infinite alternate;transform-origin:center;backface-visibility:hidden}
 #rushScreen[data-energy="red"] .rush-glimmer{background:radial-gradient(circle at 50% 65%,#ff173166,transparent 65%)}
 #rushScreen[data-energy="gold"] .rush-glimmer{background:radial-gradient(circle at 50% 65%,#ffc93466,transparent 70%)}
@@ -128,7 +132,7 @@
   <div class="screen" id="rushScreen" data-energy="low">
     <img class="rush-bg" id="rushBg" alt="ダンスホール">
     <div class="rush-glimmer"></div><div class="rush-red"></div>
-    <img class="rush-dancer" id="rushDancer" alt="未表示の旧ダンス素材"><img class="rush-dancer" id="rushDancerB" alt="未表示の旧ダンス素材">
+    <img class="rush-dancer" id="rushDancer" alt="昇一のダンスアニメーション"><img class="rush-dancer" id="rushDancerB" alt="昇一のダンスアニメーション">
     <div class="rush-shift" id="rushShift" aria-hidden="true"><div class="rush-shift-arc"></div><strong id="rushShiftTitle">STAGE CHANGE</strong><span id="rushShiftSub">昇一RUSH</span></div>
     <div class="rush-top"><span id="rushSet">昇一RUSH SET 1</span><span id="rushProgress">残り 30G</span><span id="rushGain">獲得 0枚</span></div>
     <div class="rush-bottom" id="rushTip">昇一が踊り続ける！ ベル15枚・純増12枚/G</div>
@@ -158,7 +162,7 @@
  <button class="hot lever" id="lever" aria-label="レバー"></button>
  <button class="hot stop s0" id="stop0" aria-label="左STOP"></button><button class="hot stop s1" id="stop1" aria-label="中STOP"></button><button class="hot stop s2" id="stop2" aria-label="右STOP"></button>
 </div>
-<div class="controls"><span>V23 完成版・商工会ステージ昇格・純増12枚／G</span><button id="sound">🔊 音 ON</button><button id="audioCheck" type="button">♪ 音を確認</button><button id="audioResume" type="button" hidden>♪ BGMを再生</button><button id="auto">▶ AUTO OFF</button><button id="test">⚙ テスト</button></div>
+<div class="controls"><span>V24 昇一ダンス復活・継続率昇格・純増12枚／G</span><button id="sound">🔊 音 ON</button><button id="audioCheck" type="button">♪ 音を確認</button><button id="audioResume" type="button" hidden>♪ BGMを再生</button><button id="auto">▶ AUTO OFF</button><button id="test">⚙ テスト</button></div>
 <div class="status" id="status" role="status">MAX BET → レバー → STOP ×3</div>
 <div class="debug-controls" id="debugControls"><button id="czDemo">CZを試す</button><button id="ojDemo">青7 BONUS試遊</button><button id="obDemo">赤7 BONUS試遊</button><button id="rushDemo">昇一RUSH試遊</button><button id="sevenDemo">7揃い抽選を試す</button><button id="fbet">BET</button><button id="flever">レバー</button><button id="f0">左STOP</button><button id="f1">中STOP</button><button id="f2">右STOP</button></div>
 <div class="hint">遊技：MAX BET → レバー → STOP。CZ最終判定・BONUS入賞はレバーON。</div>
@@ -500,7 +504,7 @@ function start(){
         else maybeRushCutin();
       }
     }
-   if(rushGame===27){hideShokokaiSlide();hideRushNotice();showRushSplash('chance','真おじさんおばさんCHANCE！',1250);msg('27G：真おじさんおばさんCHANCE突入！')}
+   if(rushGame===27){$('rushScreen').classList.add('final-chance');hideShokokaiSlide();hideRushNotice();showRushSplash('chance','真おじさんおばさんCHANCE！',1250);msg('27G：真おじさんおばさんCHANCE突入！')}
    else if(rushGame===28){hideRushNotice();rushChoice=null;showRushSplash('choose','',0);showRushChoice();msg('28G：写真をタップ、または左／右STOPで選択！ 継続率は選択によらない')}
    else if(rushGame===29){hideRushChoice();showRushSplash('lever','内部継続率で判定中…',1150);pulseFlash(180);msg('29G：運命のレバーON！ 継続抽選を行った')}
    else if(rushGame===30){msg('30G：結果発表！ ベルを揃えよう');}
@@ -584,7 +588,7 @@ function finish(){
        setRushStage('rainbow',false);
        msg(`昇一RUSH継続！ SET ${rushSet} +30G！`);playGoldFx('rush-continue');showRushNotice('maybe','RUSH継続確定！！',950);
        setTimeout(()=>{if(phase==='RUSH'){rushGame=0;rushContinue=null;rushChoice=null;rushStory=null;rushStoryStarted=false;rushStoryStep=0;hideShokokaiSlide();
-         hideRushSplash();setRushStage(forceRushStageFloor(pickRushEffect()),true);scheduleNextRushStage();
+         $('rushScreen').classList.remove('final-chance');hideRushSplash();setRushStage(forceRushStageFloor(pickRushEffect()),true);scheduleNextRushStage();
          locked=false;updateRushHUD();update();msg(`昇一RUSH SET ${rushSet}：30Gスタート！`) }},2350);
      }else{
        hideRushChoice();showRushSplash('end','昇一RUSH終了',2200);
@@ -642,24 +646,39 @@ function maybeRushCutin(){
  },820);
 }
 
+// V24: 11 aligned transparent images, smoothly crossfaded without empty frames.
+let rushDanceSerial=0,rushDanceSwapping=false;
 function startRushDance(){
  stopRushDance();rushFrame=0;
- let front=$('rushDancer'),back=$('rushDancerB');
- front.src=RUSH_FRAMES['1'];back.src=RUSH_FRAMES['2'];front.classList.add('show');back.classList.remove('show');
+ const token=++rushDanceSerial;
+ const front=$('rushDancer'),back=$('rushDancerB');
+ front.src=RUSH_FRAMES['1'];back.src=RUSH_FRAMES['2'];
+ front.classList.add('show');back.classList.remove('show');
  rushDanceTimer=setInterval(()=>{
-  if(phase!=='RUSH')return;
-  const next=(rushFrame+1)%11,source=RUSH_FRAMES[String(next+1)];
-  const hidden=front.classList.contains('show')?back:front;
-  const visible=hidden===front?back:front;
-  // Prepare the next frame fully before swapping layers (prevent blank flicker).
+  if(phase!=='RUSH'||rushDanceSwapping)return;
+  const next=(rushFrame+1)%11;
+  const current=front.classList.contains('show')?front:back;
+  const hidden=current===front?back:front;
+  rushDanceSwapping=true;
+  const source=RUSH_FRAMES[String(next+1)];
   if(hidden.src!==source)hidden.src=source;
-  const reveal=()=>{if(phase!=='RUSH')return;requestAnimationFrame(()=>{hidden.classList.add('show');visible.classList.remove('show')})};
-  if(hidden.complete&&hidden.naturalWidth)reveal();
-  else hidden.decode?.().then(reveal).catch(()=>{});
-  rushFrame=next;
- },1100); // slower, more consistent motion than the previous 0.6s frame rate
+  const swap=()=>{
+   if(token!==rushDanceSerial||phase!=='RUSH'){rushDanceSwapping=false;return;}
+   requestAnimationFrame(()=>{
+    if(token!==rushDanceSerial||phase!=='RUSH'){rushDanceSwapping=false;return;}
+    hidden.classList.add('show');current.classList.remove('show');
+    rushFrame=next;rushDanceSwapping=false;
+   });
+  };
+  if(hidden.complete&&hidden.naturalWidth)swap();
+  else if(hidden.decode)hidden.decode().then(swap).catch(()=>{rushDanceSwapping=false});
+  else hidden.onload=swap;
+ },1100); // deliberately relaxed dancing; 11 poses loop approximately every 12 seconds.
 }
-function stopRushDance(){clearInterval(rushDanceTimer);rushDanceTimer=null;}
+function stopRushDance(){
+ clearInterval(rushDanceTimer);rushDanceTimer=null;rushDanceSerial++;rushDanceSwapping=false;
+ $('rushDancer').classList.remove('show');$('rushDancerB').classList.remove('show');
+}
 function pickRushRate(){const n=Math.random();return n<.50?.50:n<.75?.75:n<.85?.80:n<.95?.85:.90;}
 // Higher continuation rates produce hotter stage scenes more often, but no stage guarantees success.
 // The rate is chosen once at RUSH entry and is NOT changed by these visuals.
@@ -858,8 +877,9 @@ function enterRush(){
  rushRate=pickRushRate();rushSet=1;rushGame=0;rushEarned=0;rushContinue=null;rushChoice=null;
  rushEffect=pickRushEffect();rushLastNoticeGame=-10;rushRedGames=0;
  rushStageChanges=0;rushStageHistory=[];rushNextStageGame=4;rushStageFloor=0;rushStoryStarted=false;rushStory=null;rushStoryStep=0;rushStoryAppearances=0;rushStoryWins=0;rushStoryFakes1=0;rushStoryFakes2=0;rushMilestonesSeen=new Set();clearRushMilestone();hideShokokaiSlide();
- imageOn('rushScreen',true);hideRushNotice();hideRushChoice();stopRushDance();resetRushStageEffects();
+ imageOn('rushScreen',true);$('rushScreen').classList.remove('final-chance');hideRushNotice();hideRushChoice();resetRushStageEffects();
  setRushStage(rushEffect,false);scheduleNextRushStage();updateRushHUD();
+ startRushDance(); // Foreground dancer keeps moving while stage backgrounds transform.
  startRushMusic(); // Five existing tracks shuffled continuously, each played to completion.
  showRushSplash('intro','昇一RUSH START！ 30G',1850);showRushNotice('entry','昇一RUSH突入！！',1200);
  msg('昇一RUSH突入！ 30G×セット継続型AT');update();
@@ -868,7 +888,7 @@ function enterRush(){
 }
 function endRush(){
  if(phase!=='RUSH')return;
- stopRushMusic();stopRushDance();resetRushStageEffects();hideRushChoice();hideRushSplash();hideRushNotice();hideShokokaiSlide();clearRushMilestone();setRushRedStage(false);imageOn('rushScreen',false);
+ stopRushMusic();stopRushDance();$('rushScreen').classList.remove('final-chance');resetRushStageEffects();hideRushChoice();hideRushSplash();hideRushNotice();hideShokokaiSlide();clearRushMilestone();setRushRedStage(false);imageOn('rushScreen',false);
  phase='NORMAL';locked=false;betReady=false;bonusType=null;
  msg(`昇一RUSH終了　純増+${rushEarned}枚／${rushSet}セット。通常時へ`);update();
 }
@@ -932,6 +952,6 @@ for(const [sym,src] of Object.entries(assets.symbols)){let im=new Image();imgs[s
 const czSVG='<svg xmlns="http://www.w3.org/2000/svg" width="200" height="130" viewBox="0 0 200 130"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#04d7ff"/><stop offset=".55" stop-color="#ff46b4"/><stop offset="1" stop-color="#ffe371"/></linearGradient></defs><rect x="4" y="6" width="192" height="118" rx="17" fill="#130625" stroke="#b773ff" stroke-width="7"/><path d="M26 106L55 24L77 70L108 15L126 70L156 23L177 106Z" fill="#ffdf50" stroke="#fff9c3" stroke-width="4"/><text x="100" y="89" font-family="Arial,sans-serif" font-size="67" font-weight="900" text-anchor="middle" fill="url(#g)" stroke="#030817" stroke-width="5" paint-order="stroke">CZ</text><text x="100" y="114" font-family="Arial,sans-serif" font-size="16" font-weight="900" text-anchor="middle" fill="white">CHANCE</text></svg>';
 imgs.cz=new Image();imgs.cz.onload=draw;imgs.cz.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(czSVG);
 window.addEventListener('resize',resize);resize();update();draw();window.addEventListener('load',()=>{resize();draw()});
-window.slotDebug={getState:()=>({phase,credit,games,payout,spinning,betReady,locked,czRound,czScore,bonusType,bonusReadyType,bonusLeft,bonusEarned,bonusCount,line:centerLine(),photoIndex,photoCount:PHOTOS.length,rushRate,rushGame,rushSet,rushEarned,rushContinue,rushChoice,rushStageFloor,rushStoryStarted,rushStoryStep,rushStory,rushStoryAppearances,rushStoryWins,rushStoryFakes1,rushStoryFakes2,rushMilestones:[...rushMilestonesSeen],rushTrackIndex:phase==='RUSH'?rushMusicIndex:null,rushMusicBagLeft:rushSongBag.length,rushSongPaused:rushNowSong?.paused,bonusSevenMode,stopFxCalls,bgmPaused:bonusBgm.paused,bgmSeconds:bonusBgm.currentTime,czBgmIndex:czTrackIndex,czBgmPaused:czTrackIndex===null?true:czTracks[czTrackIndex].paused,goldFxCalls,coinFxCalls}),bet,start,stop,enterCZ,beginBonus,enterRush,normalLottery,forceSeven:()=>{debugForceSeven=true},forceRushRate:r=>{rushRate=r},forceShokokai:(outcome='win',variant='good')=>{rushStoryStarted=true;rushStory={start:rushGame+1,variant,outcome};rushStoryStep=0},setRushEarned:n=>{rushEarned=n;updateRushHUD()},nextRushSong,showRushChoice,showRushNotice,setCredit:n=>{credit=n;update()},forceCZ:()=>{if(!spinning&&!betReady&&phase==='NORMAL')enterCZ()}};
+window.slotDebug={getState:()=>({phase,credit,games,payout,spinning,betReady,locked,czRound,czScore,bonusType,bonusReadyType,bonusLeft,bonusEarned,bonusCount,line:centerLine(),photoIndex,photoCount:PHOTOS.length,rushRate,rushGame,rushSet,rushEarned,rushContinue,rushChoice,rushStageFloor,rushStoryStarted,rushStoryStep,rushStory,rushStoryAppearances,rushStoryWins,rushStoryFakes1,rushStoryFakes2,rushMilestones:[...rushMilestonesSeen],rushTrackIndex:phase==='RUSH'?rushMusicIndex:null,rushDanceRunning:!!rushDanceTimer,rushDanceFrame:rushFrame,rushFinalChance:$('rushScreen').classList.contains('final-chance'),rushMusicBagLeft:rushSongBag.length,rushSongPaused:rushNowSong?.paused,bonusSevenMode,stopFxCalls,bgmPaused:bonusBgm.paused,bgmSeconds:bonusBgm.currentTime,czBgmIndex:czTrackIndex,czBgmPaused:czTrackIndex===null?true:czTracks[czTrackIndex].paused,goldFxCalls,coinFxCalls}),bet,start,stop,enterCZ,beginBonus,enterRush,normalLottery,forceSeven:()=>{debugForceSeven=true},forceRushRate:r=>{rushRate=r},forceShokokai:(outcome='win',variant='good')=>{rushStoryStarted=true;rushStory={start:rushGame+1,variant,outcome};rushStoryStep=0},setRushEarned:n=>{rushEarned=n;updateRushHUD()},nextRushSong,showRushChoice,showRushNotice,setCredit:n=>{credit=n;update()},forceCZ:()=>{if(!spinning&&!betReady&&phase==='NORMAL')enterCZ()}};
 
 </script></main></body></html>
